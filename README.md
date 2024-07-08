@@ -1,6 +1,7 @@
 # Autogen_demo_notebooks
 CloudsterConnect AUTOGEN demo notebooks
-
+Cloudster Connect are software integration experts that unify systems and simplify workflows. Learn more or get in touch with us today.
+https://www.cloudsterconnect.co/
 
 ### create a virtual environment named 'autogen' for Python on Windows
 py or python -m venv autogenenv
