@@ -4,7 +4,7 @@ import autogen
 from dotenv import load_dotenv
 import os
 from typing import Annotated
-from autogen.agentchat.contrib.gpt_assistant_agent import GPTAssistantAgent
+
 
 #Variables
 
@@ -64,17 +64,6 @@ user_proxy = autogen.UserProxyAgent(
     }
 )
 
-gpt_assistant = GPTAssistantAgent(
-    name="Coder Assistant",
-    llm_config={
-        "config_list": config_list,
-    },
-    assistant_config={
-        "tools": [{"type": "code_interpreter"}],
-    },
-    instructions="You are an expert at writing code to solve problems. Reply TERMINATE when the question is answered.",
-)
-
 engineer = autogen.AssistantAgent(
     name="Engineer",# The name is flexible, but should not contain spaces to work in group chat.
     is_termination_msg=is_termination_msg,
@@ -97,35 +86,6 @@ def ask_human_expert(question: Annotated[str, "The question you want to ask the 
     return answer
 
 
-
-@engineer.register_for_llm(description="Ask question about a file from the human expert")
-@user_proxy.register_for_execution()
-def ask_human_expert_about_code(question: Annotated[str, "The question you want to ask the human expert."],
-                     filename: Annotated[str, "Name and path of file related to the question."]) -> Annotated[str, "Answer"]:
-    """
-    Answer a technical question related to a file.
-    """
-    file_path = os.path.join(DEFAULT_PATH, filename)
-    try:
-        with open(file_path, "r", encoding='utf-8') as file:
-            contents = file.read()
-    except Exception as e:
-        return f"An error occurred while reading the file: {e}"
-    
-    result =user_proxy.initiate_chat(
-        gpt_assistant,
-        message=f"Please answer the question: {question}\n{contents}",
-        is_termination_msg=lambda msg: "TERMINATE" in msg["content"],
-        human_input_mode="NEVER",
-        clear_history=True,
-        max_consecutive_auto_reply=0,
-        summary_method= "last_msg",
-        code_execution_config={"work_dir": DEFAULT_PATH},
- 
-    )
-    
-    answer = result.summary
-    return answer
 
 @user_proxy.register_for_execution()
 @engineer.register_for_llm(description="To install new Python modules using pip.")
