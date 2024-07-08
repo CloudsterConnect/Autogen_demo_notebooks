@@ -85,7 +85,22 @@ def ask_human_expert(question: Annotated[str, "The question you want to ask the 
     answer = input(f"Please answer the question: {question}\n")
     return answer
 
+@engineer.register_for_llm(description="Ask question about a file from the human expert")
+@user_proxy.register_for_execution()
+def ask_human_expert_about_code(question: Annotated[str, "The question you want to ask the human expert."],
+                     filename: Annotated[str, "Name and path of file related to the question."]) -> Annotated[str, "Answer"]:
+    """
+    Answer a technical question related to a file.
+    """
+    file_path = os.path.join(DEFAULT_PATH, filename)
+    try:
+        with open(file_path, "r", encoding='utf-8') as file:
+            contents = file.read()
+    except Exception as e:
+        return f"An error occurred while reading the file: {e}"
 
+    answer = input(f"Please answer the question: {question}\n{contents}")
+    return answer
 
 @user_proxy.register_for_execution()
 @engineer.register_for_llm(description="To install new Python modules using pip.")
