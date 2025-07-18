@@ -1,5 +1,5 @@
 
-#!pip install pyautogen==0.2.27
+#!pip install ag2==0.2.27
 import autogen
 from dotenv import load_dotenv
 import os

@@ -11,7 +11,7 @@ autogenenv\Scripts\activate
 
 
 # Install 
-pip install pyautogen==0.2.27
+pip install ag2==0.2.27
 pip install openai==1.30.3
 pip install packaging
 # test the code
